@@ -15,13 +15,18 @@ st.set_page_config(
 # --------------------------------------------------
 @st.cache_data
 def load_data():
-    df = pd.read_csv("cleaned/transactions_cleaned.csv")
-    return df
+    return pd.read_csv("cleaned/transactions_cleaned.csv")
 
-df = load_data()
+try:
+    df = load_data()
 
-if df.empty:
-    st.error("Dataset failed to load.")
+    if df.empty:
+        st.error("Dataset loaded but is empty.")
+        st.stop()
+
+except Exception as e:
+    st.error("❌ Error loading dataset:")
+    st.exception(e)
     st.stop()
 
 # --------------------------------------------------
@@ -48,10 +53,17 @@ st.divider()
 # --------------------------------------------------
 st.subheader("Key Business Snapshot")
 
-total_revenue = df["final_amount_inr"].sum()
-active_customers = df["customer_id"].nunique()
-total_orders = df["transaction_id"].nunique()
-avg_order_value = df["final_amount_inr"].mean()
+try:
+    total_revenue = df["final_amount_inr"].sum()
+    active_customers = df["customer_id"].nunique()
+    total_orders = df["transaction_id"].nunique()
+    avg_order_value = df["final_amount_inr"].mean()
+
+except KeyError as e:
+    st.error("❌ Column missing in dataset:")
+    st.exception(e)
+    st.write("Available columns:", list(df.columns))
+    st.stop()
 
 col1, col2, col3, col4 = st.columns(4)
 
