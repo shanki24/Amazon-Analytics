@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from pathlib import Path
 
 # --------------------------------------------------
 # PAGE CONFIG
@@ -16,11 +15,14 @@ st.set_page_config(
 # --------------------------------------------------
 @st.cache_data
 def load_data():
-    base_path = Path(__file__).parent / "cleaned"
-    df = pd.read_csv(base_path / "transactions_cleaned.csv")
+    df = pd.read_csv("cleaned/transactions_cleaned.csv")
     return df
 
 df = load_data()
+
+if df.empty:
+    st.error("Dataset failed to load.")
+    st.stop()
 
 # --------------------------------------------------
 # TITLE & INTRO
