@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from pathlib import Path
 
 # --------------------------------------------------
 # PAGE CONFIG
@@ -15,19 +16,11 @@ st.set_page_config(
 # --------------------------------------------------
 @st.cache_data
 def load_data():
-    return pd.read_csv("cleaned/transactions_cleaned.csv")
+    base_path = Path(__file__).parent / "cleaned"
+    df = pd.read_csv(base_path / "transactions_cleaned.csv")
+    return df
 
-try:
-    df = load_data()
-
-    if df.empty:
-        st.error("Dataset loaded but is empty.")
-        st.stop()
-
-except Exception as e:
-    st.error("❌ Error loading dataset:")
-    st.exception(e)
-    st.stop()
+df = load_data()
 
 # --------------------------------------------------
 # TITLE & INTRO
@@ -53,17 +46,10 @@ st.divider()
 # --------------------------------------------------
 st.subheader("Key Business Snapshot")
 
-try:
-    total_revenue = df["final_amount_inr"].sum()
-    active_customers = df["customer_id"].nunique()
-    total_orders = df["transaction_id"].nunique()
-    avg_order_value = df["final_amount_inr"].mean()
-
-except KeyError as e:
-    st.error("❌ Column missing in dataset:")
-    st.exception(e)
-    st.write("Available columns:", list(df.columns))
-    st.stop()
+total_revenue = df["final_amount_inr"].sum()
+active_customers = df["customer_id"].nunique()
+total_orders = df["transaction_id"].nunique()
+avg_order_value = df["final_amount_inr"].mean()
 
 col1, col2, col3, col4 = st.columns(4)
 
