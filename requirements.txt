@@ -1,0 +1,12 @@
+pandas>=1.5
+numpy
+sqlalchemy
+pymysql
+python-dotenv
+streamlit
+matplotlib
+seaborn
+plotly
+scikit-learn
+squarify
+openpyxl
